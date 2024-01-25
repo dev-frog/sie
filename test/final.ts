@@ -72,11 +72,22 @@ interface SIEDataType {
   RES: [];
 }
 
-const rentalIncomeAccounts = [
+const netTurnoverAccountList = [
   3000, 3001, 3002, 3003, 3004, 3010, 3011, 3012, 3013, 3014, 3071, 3089, 3099,
   3105, 3106, 3107, 3108, 3200, 3211, 3212, 3223, 3231, 3305, 3308, 3389, 3401,
   3402, 3403, 3404, 3500, 3510, 3511, 3518, 3520, 3521, 3522, 3530, 3540, 3541,
   3542, 3550, 3560, 3561, 3562, 3563, 3570, 3590,
+];
+
+const rentalIncomeAccountList = [3900, 3910, 3911, 3912, 3913, 3914];
+
+const capitalizedWorkOwnAccountList = [3800, 3840, 3850, 3870];
+const otherOperatingIncomeAccountList = [
+  3600, 3610, 3611, 3612, 3613, 3619, 3620, 3630, 3670, 3671, 3672, 3679, 3680,
+  3690, 3700, 3710, 3730, 3731, 3732, 3740, 3750, 3751, 3752, 3790, 3920, 3921,
+  3922, 3925, 3929, 3930, 3940, 3950, 3960, 3970, 3971, 3972, 3973, 3980, 3981,
+  3985, 3987, 3988, 3989, 3990, 3991, 3992, 3993, 3994, 3995, 3996, 3997, 3998,
+  3999, 8230, 8231, 8236, 8491, 8710,
 ];
 
 function formatDate(dateStr: string): string {
@@ -96,59 +107,13 @@ function rangeOfFiscalYearCoved(
   }));
 }
 
-// Net sales
-function calculateNetSales(
-  data: SIEDataType,
-  startDate: string,
-  endDate: string
-) {
-  let netSales = 0;
-
-  const { VER, KONTO, RAR } = data;
-
-  const _start = startDate.split("-").join("");
-  const _slut = endDate.split("-").join("");
-
-  const fiscalYear = RAR.find(
-    ({ start, slut }) => _start >= start && _slut <= slut
-  );
-
-  if (!fiscalYear) {
-    throw new Error("No fiscal year found for the specified date range.");
-  }
-
-  // Extract revenue accounts from KONTO (you may need to adjust this based on your data structure)
-  // const revenueAccounts = KONTO.filter((account) => /* Add condition to identify revenue accounts */);
-
-  Object.values(VER).forEach((entry) => {
-    const entryVerDate = entry.verdatum;
-    const entryRegDate = entry.regdatum;
-
-    if (
-      (entryVerDate >= _start && entryVerDate <= _slut) ||
-      (entryRegDate >= _start && entryRegDate <= _slut)
-    ) {
-      entry.TRANS.forEach((transaction) => {
-        netSales += parseFloat(transaction.belop);
-
-        // if (revenueAccounts.includes(transaction.kontonr)) {
-        //   netSales += parseFloat(transaction.belop);
-        // }
-      });
-    }
-  });
-
-  return netSales;
+function isAccountInclude(kontonr: string, accountList: number[]): boolean {
+  const numericKontonr = parseInt(kontonr);
+  return accountList.includes(numericKontonr);
 }
 
-function calculateFinancialResults(
-  data: SIEDataType,
-  startDate: string,
-  endDate: string
-) {
-  let financialResults = 0;
-
-  const { VER, KONTO, RAR } = data;
+function netTurnover(data: SIEDataType, startDate: string, endDate: string) {
+  const { VER, RAR } = data;
 
   const _start = startDate.split("-").join("");
   const _slut = endDate.split("-").join("");
@@ -161,11 +126,9 @@ function calculateFinancialResults(
     throw new Error("No fiscal year found for the specified date range.");
   }
 
-  // Extract accounts representing financial items from KONTO (modify this based on your data structure)
-  // const financialItemAccounts = KONTO.filter((account) => /* Add condition to identify financial item accounts */);
+  let totalNetTurnover = 0;
 
   Object.values(VER).forEach((entry) => {
-    // Check both "verdatum" and "regdatum" to ensure the transaction is within the specified date range
     const entryVerDate = entry.verdatum;
     const entryRegDate = entry.regdatum;
 
@@ -173,40 +136,171 @@ function calculateFinancialResults(
       (entryVerDate >= startDate && entryVerDate <= endDate) ||
       (entryRegDate >= startDate && entryRegDate <= endDate)
     ) {
-      // Add logic to sum up financial results based on financial item accounts
       entry.TRANS.forEach((transaction) => {
-        if (
-          transaction.kontonr.startsWith("20") ||
-          transaction.kontonr.startsWith("26") ||
-          transaction.kontonr.startsWith("37") ||
-          transaction.kontonr.startsWith("62")
-        ) {
-          console.log(transaction);
-          financialResults += parseFloat(transaction.belop);
+        if (isAccountInclude(transaction.kontonr, netTurnoverAccountList)) {
+          totalNetTurnover += parseFloat(transaction.belop);
         }
       });
     }
   });
 
-  return financialResults;
+  return totalNetTurnover;
 }
 
 // Rental income
-function rentalIncome(data: SIEDataType, startDate: string, endDate: string) {}
+function rentalIncome(data: SIEDataType, startDate: string, endDate: string) {
+  const { VER, RAR } = data;
+
+  const _start = startDate.split("-").join("");
+  const _slut = endDate.split("-").join("");
+
+  const fiscalYear = RAR.find(
+    ({ start, slut }) => _start >= start && _slut <= slut
+  );
+
+  if (!fiscalYear) {
+    throw new Error("No fiscal year found for the specified date range.");
+  }
+
+  let totalRentalIncome = 0;
+
+  Object.values(VER).forEach((entry) => {
+    const entryVerDate = entry.verdatum;
+    const entryRegDate = entry.regdatum;
+
+    if (
+      (entryVerDate >= startDate && entryVerDate <= endDate) ||
+      (entryRegDate >= startDate && entryRegDate <= endDate)
+    ) {
+      entry.TRANS.forEach((transaction) => {
+        if (isAccountInclude(transaction.kontonr, rentalIncomeAccountList)) {
+          totalRentalIncome += parseFloat(transaction.belop);
+        }
+      });
+    }
+  });
+
+  return totalRentalIncome;
+}
+
+function CapitalizedWorkOwnAccount(
+  data: SIEDataType,
+  startDate: string,
+  endDate: string
+) {
+  const { VER, RAR } = data;
+
+  const _start = startDate.split("-").join("");
+  const _slut = endDate.split("-").join("");
+
+  const fiscalYear = RAR.find(
+    ({ start, slut }) => _start >= start && _slut <= slut
+  );
+
+  if (!fiscalYear) {
+    throw new Error("No fiscal year found for the specified date range.");
+  }
+
+  let totalCapitalizedWorkOwn = 0;
+
+  Object.values(VER).forEach((entry) => {
+    const entryVerDate = entry.verdatum;
+    const entryRegDate = entry.regdatum;
+
+    if (
+      (entryVerDate >= startDate && entryVerDate <= endDate) ||
+      (entryRegDate >= startDate && entryRegDate <= endDate)
+    ) {
+      entry.TRANS.forEach((transaction) => {
+        if (
+          isAccountInclude(transaction.kontonr, capitalizedWorkOwnAccountList)
+        ) {
+          console.log(transaction);
+          totalCapitalizedWorkOwn += parseFloat(transaction.belop);
+        }
+      });
+    }
+  });
+
+  return totalCapitalizedWorkOwn;
+}
+
+function OtherOperatingIncome(
+  data: SIEDataType,
+  startDate: string,
+  endDate: string
+) {
+  const { VER, RAR } = data;
+
+  const _start = startDate.split("-").join("");
+  const _slut = endDate.split("-").join("");
+
+  const fiscalYear = RAR.find(
+    ({ start, slut }) => _start >= start && _slut <= slut
+  );
+
+  if (!fiscalYear) {
+    throw new Error("No fiscal year found for the specified date range.");
+  }
+
+  let totalOtherOperatingIncome = 0;
+
+  Object.values(VER).forEach((entry) => {
+    const entryVerDate = entry.verdatum;
+    const entryRegDate = entry.regdatum;
+
+    if (
+      (entryVerDate >= startDate && entryVerDate <= endDate) ||
+      (entryRegDate >= startDate && entryRegDate <= endDate)
+    ) {
+      entry.TRANS.forEach((transaction) => {
+        if (
+          isAccountInclude(transaction.kontonr, otherOperatingIncomeAccountList)
+        ) {
+          console.log(transaction);
+          totalOtherOperatingIncome += parseFloat(transaction.belop);
+        }
+      });
+    }
+  });
+
+  return totalOtherOperatingIncome;
+}
 
 try {
   let jsonData = sieObject as SIEDataType;
 
-  // const data = rangeOfFiscalYearCoved(jsonData.RAR);
-  // console.log(data);
   const startDate = "2021-07-01";
   const endDate = "2022-06-30";
 
-  const netSales = calculateNetSales(jsonData, startDate, endDate);
-  console.log(netSales);
+  // const result = rentalIncome(jsonData, startDate, endDate);
 
-  const result = calculateFinancialResults(jsonData, startDate, endDate);
-  console.log("Financial Results:", result);
+  const netTurnover_result = netTurnover(jsonData, startDate, endDate);
+  const rentalIncome_result = rentalIncome(jsonData, startDate, endDate);
+  const CapitalizedWorkOwn_result = CapitalizedWorkOwnAccount(
+    jsonData,
+    startDate,
+    endDate
+  );
+
+  const OtherOperatingIncome_result = OtherOperatingIncome(
+    jsonData,
+    startDate,
+    endDate
+  );
+
+  console.log(`netTurnover: `, netTurnover_result);
+  console.log(`rentalIncome result: `, rentalIncome_result);
+  console.log(`Capitalized work on own account: `, CapitalizedWorkOwn_result);
+  console.log(`Other operating income: `, OtherOperatingIncome_result);
+
+  console.log(
+    `Operating income: `,
+    netTurnover_result +
+      rentalIncome_result +
+      CapitalizedWorkOwn_result +
+      OtherOperatingIncome_result
+  );
 } catch (error) {
   console.log(error);
 }
