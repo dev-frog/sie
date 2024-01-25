@@ -1,0 +1,25 @@
+{
+  "name": "sie",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "npx tsc",
+    "dev": "nodemon --exec ts-node src/main.ts",
+    "dev:debug": "nodemon src/main.ts",
+    "test": "nodemon test/test.ts",
+    "income": "nodemon test/income.ts",
+    "rg": "nodemon test/RevenueGrowth.ts",
+    "final": "nodemon test/final.ts"
+  },
+  "dependencies": {
+    "axios": "^1.6.2",
+    "fs": "^0.0.1-security"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.2",
+    "nodemon": "^3.0.2",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.3.2"
+  }
+}
