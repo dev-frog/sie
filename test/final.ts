@@ -72,6 +72,7 @@ interface SIEDataType {
   RES: [];
 }
 
+// INCOME STATEMENT
 const netTurnoverAccountList = [
   3000, 3001, 3002, 3003, 3004, 3010, 3011, 3012, 3013, 3014, 3071, 3089, 3099,
   3105, 3106, 3107, 3108, 3200, 3211, 3212, 3223, 3231, 3305, 3308, 3389, 3401,
@@ -185,6 +186,193 @@ const changeInExcessDepreciationAccountList = [
 const otherFinancialStatementAllocationsAccountList = [
   8890, 8891, 8892, 8896, 8899,
 ];
+
+const taxesOnCurrentYearsProfitLossAccountList = [8910, 8920, 8930, 8940, 8980];
+
+// BALANCE SHEET
+// - Intangible Fixed Assets
+const developmentExpenditureAccountList = [1010, 1011, 1012, 1018, 1019];
+
+const concessionsPatentsLicenseAccountList = [
+  1020, 1028, 1029, 1030, 1038, 1039, 1040, 1048, 1049,
+];
+
+const trademarksAccountList = [1050, 1058, 1059];
+
+const tenanciesLeaseholdsSimilarAccountList = [1060, 1068, 1069];
+
+const goodwillAccountList = [1070, 1078, 1079];
+
+const advancesRegardingIntangibleFixedAssetsAccountList = [1080, 1081, 1088];
+
+// 'Tangible Fixed Assets
+
+const buildingsLandAccountList = [
+  1110, 1111, 1112, 1118, 1119, 1130, 1140, 1150, 1158, 1159, 1180, 1181, 1188,
+];
+
+const expensesIncurredOnAnotherPropertyAccountList = [1120, 1129];
+
+const investmentPropertiesAccountList = [];
+
+const machineryOtherTechnicalEquipment = [1210, 1211, 1213, 1218, 1219];
+
+const equipmentTools = [
+  1220, 1221, 1222, 1223, 1225, 1228, 1229, 1230, 1231, 1232, 1238, 1239, 1240,
+  1241, 1242, 1243, 1244, 1245, 1246, 1247, 1248, 1249, 1250, 1251, 1257, 1258,
+  1259, 1260, 1269,
+];
+
+const constructionInProgressAdvancesOnTangibleFixedAssets = [1280, 1281, 1288];
+
+const otherTangibleFixedAssetsAccountList = [1290, 1291, 1292, 1298, 1299];
+
+// Financial fixed assets
+
+const sharesInGroupCompaniesAccountList = [
+  1310, 1311, 1312, 1313, 1314, 1316, 1318,
+];
+
+const longTermReceivablesFromGroupCompanies = [1320, 1321, 1322, 1323, 1328];
+
+const sharesInGroupCompanies = [1330, 1336, 1338];
+
+const longTermReceivablesFromAssociates = [1340, 1348];
+
+const capitalInsurance = []; // no account fount
+const otherLongTermReceivables = [1350, 1351, 1352, 1353, 1354, 1356, 1358];
+
+const loansToShareholdersRelatedParties = [1360, 1369];
+
+const deferredTaxReceivables = [1370];
+
+// Stocks of goods
+
+const rawMaterialsSupplies = [
+  1410, 1419, 1420, 1429, 1430, 1431, 1432, 1438, 1439,
+];
+
+const workInProgress = [1440, 1449];
+const finishedGoods = [1450, 1459];
+const BRtradeGoodsAccountList = [1460, 1465, 1466, 1467, 1469];
+const ongoingWork = [1470, 1471, 1478, 1479];
+const advancesForGoodsServices = [1480, 1481, 1489];
+const otherInventoryAssets = [1490, 1491, 1492, 1493];
+
+// Short-term receivables
+
+const accountsReceivable = [
+  1510, 1511, 1512, 1513, 1515, 1516, 1518, 1519, 1520, 1525, 1529, 1530, 1531,
+  1532, 1535, 1536, 1539, 1550,
+];
+
+const accountsReceivableFromGroupCompanies = [
+  1560, 1561, 1562, 1563, 1565, 1568, 1569,
+];
+
+const accountsReceivableFromAssociatedCompanies = [
+  1570, 1575, 1578, 1579, 1580,
+];
+
+const taxReceivables = [1640];
+
+const accruedButUnInvoicedRevenue = [1620];
+
+const shortTermReceivablesFromGroupCompanies = [1660, 1661, 1662, 1663];
+
+const shortTermReceivablesFromAssociates = [1670];
+
+const otherReceivables = [
+  1610, 1611, 1612, 1613, 1614, 1619, 1630, 1650, 1680, 1681, 1682, 1683, 1684,
+  1685, 1687, 1688, 1689, 1690,
+];
+
+const prepaidExpensesAccruedIncome = [
+  1710, 1720, 1730, 1740, 1750, 1760, 1770, 1780, 1790,
+];
+
+// Short-term investments
+
+const otherShortTermInvestments = [
+  1810, 1820, 1830, 1860, 1869, 1880, 1886, 1889, 1890,
+];
+
+const cashAndCashEquivalent = [
+  1910, 1911, 1912, 1913, 1914, 1920, 1930, 1931, 1940, 1950, 1960, 1970, 1972,
+  1973, 1974, 1979, 1980, 1990,
+];
+
+//  EQUITY AND LIABILITIES
+
+//  --> Equity
+// -----> Restricted equity
+
+const shareCapital = [
+  2010, 2011, 2012, 2013, 2017, 2018, 2019, 2020, 2023, 2028, 2029, 2030, 2033,
+  2038, 2039, 2040, 2043, 2048, 2049, 2050, 2060, 2061, 2065, 2066, 2067, 2068,
+  2069, 2070, 2071, 2072, 2080, 2081, 2082,
+];
+const revaluationFund = [2083, 2084, 2085];
+const reserveFund = [2086, 2087];
+const fundForDevelopmentExpenditure = [2088];
+
+// ------> Unrestricted equity
+const sharePremiumReserve = [2097];
+const retainedEarnings = [2090, 2091, 2092, 2093, 2094, 2095, 2096, 2098];
+const stockOptions = []; // no account found
+const currentYearsEarnings = [2099];
+
+// ---> Untaxed reserves
+
+const untaxedReserves = [
+  2110, 2111, 2112, 2113, 2120, 2123, 2124, 2125, 2126, 2127, 2128, 2129, 2150,
+  2151, 2152, 2153, 2160, 2161, 2162, 2163, 2164, 2180, 2181, 2185, 2190, 2196,
+  2199,
+];
+// ---------> Provisions
+
+const provisionsForPensionsSimilarObligations = [2210, 2220, 2230];
+const provisionsForDeferredTaxes = [2240, 2250, 2252, 2253];
+const otherProvisions = [2290];
+
+// -----> Long-term liabilities
+const bondLoans = [2320, 2321, 2322, 2323, 2324];
+const liabilitiesToCreditInstitutions = [2330, 2340, 2350, 2351, 2355, 2359];
+const longTermLiabilitiesToGroupCompanies = [2360, 2361, 2362, 2363];
+const longTermLiabilitiesToAssociatedCompanies = [2370];
+const otherLongTermLiabilities = [
+  2390, 2391, 2392, 2393, 2394, 2395, 2396, 2397, 2399,
+];
+
+//  shortTermLiabilities
+const ShortTermLiabilitiesToCreditInstitutions = [2410, 2411, 2417, 2419];
+const advancesFromCustomers = [2420, 2421, 2429];
+const ShortTermOngoingWork = [2430, 2431, 2438, 2439];
+const accountsPayable = [2440, 2441, 2443, 2445, 2448];
+const invoicedButNotAccruedIncome = [2450];
+const accountsPayableToGroupCompanies = [2460, 2461, 2462, 2463];
+const accountsPayableToAssociatedCompanies = [2470];
+const otherShortTermLiabilitiesToCreditInstitutions = [2480, 2490, 2491, 2492];
+const taxLiabilities = [2510, 2512, 2513, 2514, 2515, 2516, 2517, 2518];
+const otherShortTermLiabilities = [
+  2499, 2610, 2611, 2612, 2613, 2614, 2615, 2616, 2617, 2618, 2620, 2621, 2622,
+  2623, 2624, 2625, 2626, 2627, 2628, 2630, 2631, 2632, 2633, 2634, 2635, 2636,
+  2637, 2638, 2640, 2641, 2642, 2645, 2646, 2647, 2648, 2649, 2650, 2660, 2661,
+  2668, 2669, 2710, 2730, 2731, 2732, 2740, 2750, 2760, 2761, 2762, 2790, 2791,
+  2792, 2793, 2794, 2795, 2799, 2810, 2811, 2812, 2820, 2821, 2822, 2823, 2829,
+  2830, 2850, 2880, 2890, 2891, 2892, 2893, 2895, 2897, 2898, 2899,
+];
+
+const shortTermBorrowings = [2840, 2841, 2849];
+const liabilitiesToGroupCompanies = [2860, 2861, 2862, 2863];
+const liabilitiesToAssociates = [2870];
+const accruedExpensesAndDeferredIncome = [
+  2910, 2911, 2912, 2919, 2920, 2930, 2931, 2940, 2941, 2942, 2943, 2944, 2950,
+  2951, 2959, 2960, 2970, 2971, 2972, 2979, 2980, 2990, 2991, 2992, 2993, 2998,
+  2999,
+];
+
+// ------------------------------ function List ------------------------
 
 function formatDate(dateStr: string): string {
   return `${dateStr.substring(0, 4)}-${dateStr.substring(
