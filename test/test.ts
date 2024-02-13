@@ -15,4 +15,4 @@ const account = sie.getAccount();
 
 // console.log(sieObject);
 // write to file
-fs.writeFileSync("./sie_2023.json", JSON.stringify(sieObject, null, 2));
+fs.writeFileSync("./sie_2024.json", JSON.stringify(sieObject, null, 2));

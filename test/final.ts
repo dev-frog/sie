@@ -1,5 +1,5 @@
 import fs from "fs";
-const data = fs.readFileSync("./test/sie.json", "utf-8");
+const data = fs.readFileSync("./test/sie_2023.json", "utf-8");
 const sieObject = JSON.parse(data);
 
 interface fiscalYearCovered {
@@ -175,6 +175,19 @@ function rangeOfFiscalYearCoved(
 function isAccountInclude(kontonr: string, accountList: number[]): boolean {
   const numericKontonr = parseInt(kontonr);
   return accountList.includes(numericKontonr);
+}
+
+// get the fiscal year
+function yearInSIEFile(data: SIEDataType) {
+  const { VER, RAR } = data;
+  const fiscalYear = RAR.map((data, index) => {
+    return {
+      no: Math.abs(parseInt(data.årsnr)) + 1,
+      start: formatDate(data.start),
+      end: formatDate(data.slut),
+    };
+  });
+  return fiscalYear;
 }
 
 // function functionTemplate(
@@ -1628,50 +1641,6 @@ function expensesIncurredOnAnotherProperty(
   return totalFunctionTemplate;
 }
 
-// > 3.Investment properties
-// const investmentPropertiesAccountList = [];
-// function investmentProperties(
-//   data: SIEDataType,
-//   startDate: string,
-//   endDate: string
-// ) {
-//   const { VER, RAR } = data;
-
-//   const _start = startDate.split("-").join("");
-//   const _slut = endDate.split("-").join("");
-
-//   const fiscalYear = RAR.find(
-//     ({ start, slut }) => _start >= start && _slut <= slut
-//   );
-
-//   if (!fiscalYear) {
-//     throw new Error("No fiscal year found for the specified date range.");
-//   }
-
-//   let totalFunctionTemplate = 0;
-
-//   Object.values(VER).forEach((entry) => {
-//     const entryVerDate = entry.verdatum;
-//     const entryRegDate = entry.regdatum;
-
-//     if (
-//       (entryVerDate >= startDate && entryVerDate <= endDate) ||
-//       (entryRegDate >= startDate && entryRegDate <= endDate)
-//     ) {
-//       entry.TRANS.forEach((transaction) => {
-//         if (
-//           isAccountInclude(transaction.kontonr, investmentPropertiesAccountList)
-//         ) {
-//           console.log(transaction);
-//           totalFunctionTemplate += parseFloat(transaction.belop);
-//         }
-//       });
-//     }
-//   });
-
-//   return totalFunctionTemplate;
-// }
-
 // > 4.Machinery and other technical equipment
 const machineryOtherTechnicalEquipmentAccountList = [
   1210, 1211, 1213, 1218, 1219,
@@ -2048,50 +2017,6 @@ function longTermReceivablesFromAssociates(
 
   return totalFunctionTemplate;
 }
-
-// > 5.Capital insurance
-// const capitalInsuranceAccountList = []; // no account fount
-// function capitalInsurance(
-//   data: SIEDataType,
-//   startDate: string,
-//   endDate: string
-// ) {
-//   const { VER, RAR } = data;
-
-//   const _start = startDate.split("-").join("");
-//   const _slut = endDate.split("-").join("");
-
-//   const fiscalYear = RAR.find(
-//     ({ start, slut }) => _start >= start && _slut <= slut
-//   );
-
-//   if (!fiscalYear) {
-//     throw new Error("No fiscal year found for the specified date range.");
-//   }
-
-//   let totalFunctionTemplate = 0;
-
-//   Object.values(VER).forEach((entry) => {
-//     const entryVerDate = entry.verdatum;
-//     const entryRegDate = entry.regdatum;
-
-//     if (
-//       (entryVerDate >= startDate && entryVerDate <= endDate) ||
-//       (entryRegDate >= startDate && entryRegDate <= endDate)
-//     ) {
-//       entry.TRANS.forEach((transaction) => {
-//         if (
-//           isAccountInclude(transaction.kontonr, capitalInsuranceAccountList)
-//         ) {
-//           console.log(transaction);
-//           totalFunctionTemplate += parseFloat(transaction.belop);
-//         }
-//       });
-//     }
-//   });
-
-//   return totalFunctionTemplate;
-// }
 
 // > 6.Other long-term receivables
 const otherLongTermReceivablesAccountList = [
@@ -3045,12 +2970,21 @@ function cashAndCashEquivalent(
 }
 
 try {
+  const sieFileUrl =
+    "https://cedofinances.s3.eu-west-1.amazonaws.com/uploads/6587e71996b164310c00c48c/SIE/7a534047-3f73-4472-9d79-a4d86f66d161-20230101-20230331_AB.se";
+
   let jsonData = sieObject as SIEDataType;
 
-  const startDate = "2021-07-01";
-  const endDate = "2022-06-30";
+  const fiscalYear_result = yearInSIEFile(jsonData);
 
-  // const result = rentalIncome(jsonData, startDate, endDate);
+  console.log(
+    `----------------------------------------\nFiscal Years: `,
+    fiscalYear_result
+  );
+  console.log(`----------------------------------------`);
+
+  const startDate = "2022-08-03";
+  const endDate = "2022-12-31";
 
   const netTurnover_result = netTurnover(jsonData, startDate, endDate);
   const rentalIncome_result = rentalIncome(jsonData, startDate, endDate);
@@ -3072,13 +3006,13 @@ try {
   console.log(`Other operating income: `, OtherOperatingIncome_result);
 
   console.log(
-    `------\nOperating income: `,
+    `----------------------------------------\nOperating income: `,
     netTurnover_result +
       rentalIncome_result +
       CapitalizedWorkOwn_result +
       OtherOperatingIncome_result
   );
-  console.log(`------`);
+  console.log(`----------------------------------------`);
 
   // Raw materials and supplies
   const rawMaterialSupplies_result = rawMaterialSupplies(
@@ -3090,7 +3024,6 @@ try {
   console.log(`Raw materials and supplies: `, rawMaterialSupplies_result);
 
   // Trade goods
-
   const tradeGoods_result = tradeGoods(jsonData, startDate, endDate);
   console.log(`Trade goods: `, tradeGoods_result);
 
@@ -3124,9 +3057,172 @@ try {
 
   // Other operating expenses
 
-  // 'Operating profit
+  const otherOperatingExpenses_result = otherOperatingExpense(
+    jsonData,
+    startDate,
+    endDate
+  );
 
-  // RESULT OF THE YEAR
+  // --- Operating expense ---
+  console.log(
+    `----------------------------------------\nOperating expense: `,
+    rawMaterialSupplies_result +
+      tradeGoods_result +
+      otherExternalCosts_result +
+      personnelCosts_result +
+      depreciationAmortization_result +
+      otherOperatingExpenses_result,
+    `\n----------------------------------------`
+  );
+
+  console.log(`Other operating expenses: `, otherOperatingExpenses_result);
+
+  // ------------------  Result from financial investments ------------------
+
+  // Result from financial investments
+  const resultFromFinancialInvestments_result = resultFromSharesGroupCompanies(
+    jsonData,
+    startDate,
+    endDate
+  );
+
+  console.log(
+    `Result from financial investments: `,
+    resultFromFinancialInvestments_result
+  );
+
+  // Result from shares in associated companies
+  const resultFromSharesAssociatedCompanies_result =
+    resultFromFinancialSharesInAssociatedCompanies(
+      jsonData,
+      startDate,
+      endDate
+    );
+
+  console.log(
+    `Result from shares in associated companies: `,
+    resultFromSharesAssociatedCompanies_result
+  );
+
+  // resultFromFinancialAssets
+  const resultFromFinancialAssets_result = resultFromFinancialAssets(
+    jsonData,
+    startDate,
+    endDate
+  );
+
+  console.log(
+    `Result from financial assets: `,
+    resultFromFinancialAssets_result
+  );
+
+  // InterestIncome
+  const interestIncome_result = InterestIncome(jsonData, startDate, endDate);
+
+  console.log(`Interest income: `, interestIncome_result);
+
+  // depreciationImpairmentOfSharesGroupCompanies
+  const depreciationImpairmentOfSharesGroupCompanies_result =
+    depreciationImpairmentOfSharesGroupCompanies(jsonData, startDate, endDate);
+
+  console.log(
+    `Depreciation and impairment of shares in group companies: `,
+    depreciationImpairmentOfSharesGroupCompanies_result
+  );
+
+  // depreciationImpairmentOfFinancialAssets
+  const depreciationImpairmentOfFinancialAssets_result =
+    depreciationImpairmentOfFinancialAssets(jsonData, startDate, endDate);
+
+  console.log(
+    `Depreciation and impairment of financial assets: `,
+    depreciationImpairmentOfFinancialAssets_result
+  );
+
+  // interestExpense
+  const interestExpense_result = interestExpense(jsonData, startDate, endDate);
+
+  console.log(`Interest expense: `, interestExpense_result);
+
+  // ------------------  Result from financial investments ------------------
+  console.log(
+    `----------------------------------------\n'Result after financial items: `,
+    resultFromFinancialInvestments_result +
+      resultFromSharesAssociatedCompanies_result +
+      resultFromFinancialAssets_result +
+      interestIncome_result +
+      depreciationImpairmentOfSharesGroupCompanies_result +
+      depreciationImpairmentOfFinancialAssets_result +
+      interestExpense_result,
+    "\n----------------------------------------"
+  );
+
+  // ------------------  Financial statement allocations ------------------
+  const groupContributionsReceivedPaid_result = groupContributionsReceivedPaid(
+    jsonData,
+    startDate,
+    endDate
+  );
+
+  console.log(
+    `Group contributions received/paid: `,
+    groupContributionsReceivedPaid_result
+  );
+
+  // Change in tax allocation fund
+  const changeInTaxAllocationFunds_result = changeInTaxAllocationFunds(
+    jsonData,
+    startDate,
+    endDate
+  );
+
+  console.log(
+    `Change in tax allocation fund: `,
+    changeInTaxAllocationFunds_result
+  );
+
+  // changeInExcessDepreciation
+  const changeInExcessDepreciation_result = changeInExcessDepreciation(
+    jsonData,
+    startDate,
+    endDate
+  );
+
+  console.log(
+    `Change in excess depreciation: `,
+    changeInExcessDepreciation_result
+  );
+
+  // otherFinancialStatementAllocations
+  const otherFinancialStatementAllocations_result =
+    otherFinancialStatementAllocations(jsonData, startDate, endDate);
+
+  console.log(
+    `Other financial statement allocations: `,
+    otherFinancialStatementAllocations_result
+  );
+
+  // 'Profit before tax
+  console.log(
+    `----------------------------------------\nProfit before tax: `,
+    groupContributionsReceivedPaid_result +
+      changeInTaxAllocationFunds_result +
+      changeInExcessDepreciation_result +
+      otherFinancialStatementAllocations_result,
+    "\n----------------------------------------"
+  );
+
+  // taxesOnCurrentYearsProfitLoss
+  const taxesOnCurrentYearsProfitLoss_result = taxesOnCurrentYearsProfitLoss(
+    jsonData,
+    startDate,
+    endDate
+  );
+
+  console.log(
+    `Taxes on current year's profit/loss: `,
+    taxesOnCurrentYearsProfitLoss_result
+  );
 } catch (error) {
   console.log(error);
 }
